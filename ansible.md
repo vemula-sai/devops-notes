@@ -35,7 +35,7 @@
 * Make a note all the manual steps for deploying the application.
 * For each step find the command and convert that into declaration (Module).
 * ![preview](images/ansible1.png)
-* [ReferHere](https://docs.ansible.com/ansible/2.9/modules/apt_module.html#apt-module) for all modules.
+* [ReferHere](https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html) for all modules.
   
 ## playbook syntax
 ```
@@ -75,5 +75,74 @@ ansible --version
 
 ```
 ansible --version (check version)
-ansible -i hosts -m ping -k all (to ping the hosts)
+ansible -i hosts -m ping -k all (to ping the hosts with password)
+ansible -i hosts -m ping all (to ping the hosts with out password)
 ansible-playbook -i inventoryfile yamlfile
+```
+## Adhoc
+
+* In ansible we can excute activity by using adhoc commands 
+  * good for rare activities for but history can not be maintained we also use any module by adhoc command.
+  * Adhoc command for creating a file:
+  ``` 
+   ansible -m <module-name> -a <parameters/arguments> -i <inventory> all
+   ansible -m ansible.builtin.file -a 'path=/tmp/1.txt state=touch' all
+  ```     
+## yaml playbook 
+
+* declaring the whole deployment as a yaml file.
+ *good for automating things used for multiple tyms and history can maintained for everychange in the playbook.
+ ```
+ ---
+- name: learning playbooks
+  hosts: all
+  become: no
+  tasks:
+    - name: create a empty file
+      ansible.builtin.file:
+        path: /tmp/1.txt
+        state: touch
+ ```
+ * become is no coz for creating file sudo permission is not mandatory.
+
+## tomcat installation
+
+* manual steps
+```
+sudo apt update
+sudo apt install openjdk-8-jdk -y
+sudo apt install tomcat9 -y
+wget https://referenceapplicationskhaja.s3.us-west-2.amazonaws.com/gameoflife.war
+sudo cp gameoflife.war /var/lib/tomcat9/webapps/
+sudo systemctl restart tomcat9.service
+
+```
+* playbook for tomcat installation:
+```
+---
+- name: deploy game of life
+  become: yes
+  hosts: all
+  tasks:
+    - name: update ubuntu packages
+      ansible.builtin.apt:
+        name: openjdk-8-jdk
+        update_cache: yes
+        state: present
+    - name: install tomcat9
+      ansible.builtin.apt:
+        name: tomcat9
+        state: present
+    - name: download the gameoflife war file
+      ansible.builtin.get_url:
+        dest: /var/lib/tomcat9/webapps/gameoflife.war
+        url: https://referenceapplicationskhaja.s3.us-west-2.amazonaws.com/gameoflife.war
+    - name: restart tomcat9 service
+      ansible.builtin.systemd:
+        enabled: yes
+        name: tomcat9
+        state: restarted    
+```
+* create a file in the path /var/www/html/info.php with content <?php 
+  phpinfo( ); ?>
+* [Refer Here](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html) for ***apt module***.
