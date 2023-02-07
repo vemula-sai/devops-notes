@@ -92,16 +92,19 @@ ansible-playbook -i inventoryfile yamlfile
 
 * declaring the whole deployment as a yaml file.
  *good for automating things used for multiple tyms and history can maintained for everychange in the playbook.
+
+[Refer Here](https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html) for yaml.
+
  ```
  ---
-- name: learning playbooks
-  hosts: all
-  become: no
-  tasks:
-    - name: create a empty file
-      ansible.builtin.file:
-        path: /tmp/1.txt
-        state: touch
+   - name: learning playbooks
+     hosts: all
+     become: no
+     tasks:
+       - name: create a empty file
+         ansible.builtin.file:
+         path: /tmp/1.txt
+         state: touch
  ```
  * become is no coz for creating file sudo permission is not mandatory.
 
@@ -145,4 +148,52 @@ sudo systemctl restart tomcat9.service
 ```
 * create a file in the path /var/www/html/info.php with content <?php 
   phpinfo( ); ?>
-* [Refer Here](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html) for ***apt module***.
+* [Refer Here](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html) for apt,get_url,service modules.
+
+## same stuff to be installed on linux os.
+
+```
+- name: install php packages
+  ansible.builtin.yum:
+    name:
+      - php
+      - php-mysql
+    state: present
+```
+## Configuring Password Less Authentication
+
+``` 
+ssh-keygen 
+ssh-copy-id nodeuser@privateip
+
+```
+![Preview](images/image3.png)
+![Preview](images/image4.png)
+
+* We create a public/private key pair in the Ansible control node, Then we copy the public key to the nodes which ansible will connect
+* Create a keypair in the ansible control node as a devops user.
+
+
+## Inventory files in ansible
+
+* when ansible is installed a default inventory file is created ***/etc/ansible/hosts***.
+* when ansible is installed a default config file is created ***/etc/ansible/ansible.cfg*** .
+
+* [Refer Here](https://github.com/ansible/ansible/blob/stable-2.9/examples/ansible.cfg) for default inventory config file.
+  
+* Inventory file in ansible can be written in two formats.
+   * ini format
+   * yaml format
+* ![Preview](images/image5.png) for ini format inventory.
+* ![Preview](images/image6.png) for pinging the particular hosts in inventory file.
+* The above inventories are called as static inventories, there are ways to create dynamic inventories as well.
+* Inventory file can have groups. An entry can be duplicate in many groups.
+* The ideal way of dealing with inventory files is to create a inventory file with the name of the environment and ensure the groups names are consistent across different inventories
+  * systemtest_hosts
+  * performancetests_hosts
+  * pre_prod_hosts
+  * prod_hosts
+
+  
+
+
