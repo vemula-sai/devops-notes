@@ -497,6 +497,61 @@ ansible -m setup -i hosts ubuntu
 * inventory can be static and dynamic.
 * ini and yaml foramt are for static inventories.
 * [Refer Here](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html)
-* [Refer Here](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html#organizing-host-and-group-variables) for  organizing the host and inventory variables.  
+* [Refer Here](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html#organizing-host-and-group-variables) for  organizing the host and inventory variables.
+* [Refer Here](https://github.com/asquarezone/AnsibleZone/commit/0fe3de5db91f0f4bde75732ab95f8772dd4968ad)  for yaml based inventory file.
+
+## Reusable Assets in Ansible:
+
+* Ansible playbooks can be reused directly
+  * import_playbook module [Refer Here](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/import_playbook_module.html)
+  * include_playbook module [Refer Here](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_module.html)
+  * Import vs Include [Refer Here](https://docs.ansible.com/ansible/2.9/user_guide/playbooks_reuse_includes.html#includes-vs-imports).
+  * Skipping or including only certain tasks in the playbook can be done by tags [Refer Here](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tags.html).
+  ![Preview](images/image16.png) 
+  ![Preview](images/image18.png)
+
+## Ansible Roles and Collections
+
+* Ansible hosts reusable roles in Ansible Galaxy [Refer Here](https://galaxy.ansible.com/)
+
+* Lets try to use some role to install mysql [Refer Here](https://galaxy.ansible.com/geerlingguy/mysql)
+* Lets get the role into the ansible control node
+```
+ansible-galaxy install <role-name>
+ansible-galaxy install geerlingguy.mysql
+```
+![Preview](images/image19.png)
+
+* Lets create a ansible role to install tomcat
+![Preview](images/image20.png)
+
+* In roles we have different folders
+  * defaults: for default variable values
+  * files: all the static files of the role
+  * templates: all the .j2 files containing templates
+  * tasks: all the tasks that need to be executed
+  * handlers: all the handlers
+  * vars: for variables
+  * meta: is metadata about role
+  * [Refer Here](https://github.com/asquarezone/AnsibleZone/commit/84dcf061ea5db4aef5ede48574802a6bf133337b) for created roles and collection.
+
+## Ansible Parallelism
+* Ansible parallelism can be set by using forks, the default number is 5.
+* Ansible will create 5 parallel connections to 5 servers in inventory, execute the playbook tasks and once they are complete, then next batch of 5 servers start
+* If we need to change the number of forks
+```
+ansible-playbook -f <count>
+
+```
+* [Refer Here](https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html) for Playbook execution strategies.
+* [Refer Here](https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html#ordering-execution-based-on-inventory)for Ordering inventory strategies.
+
+## Dynamic inventory
+* Create an executable in any programming language/shell script which will return the server ip address/fqdn i the json format suggested by ansible.
+* [Refer Here](https://github.com/vshn/ansible-dynamic-inventory-ec2/blob/master/ec2.py)for aws based dynamic inventory.
+
+* [Refer Here](https://directdevops.blog/2022/08/14/devops-classroomnotes-14-aug-2022/) for last class notes.
+
+
 
 
